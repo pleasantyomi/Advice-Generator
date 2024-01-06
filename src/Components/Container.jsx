@@ -12,8 +12,11 @@ const Container = () => {
     const fetchAdvice = async() => {
         const res = await fetch("https://api.adviceslip.com/advice")
         const data = await res.json()
+// Save data to local storage
+        localStorage.setItem('apiData', JSON.stringify(data));
 
-        console.log(data)
+// Retrieve data from local storage
+        const storedData = JSON.parse(localStorage.getItem('apiData'));
 
         setText(data)
     }
@@ -22,14 +25,23 @@ const Container = () => {
         fetchAdvice()
     }, [] )
 
+    window.addEventListener("beforeunload", (event) => {
+        fetchAdvice();
+        console.log("API call before page reload");
+    });
+    window.addEventListener("unload", (event) => {
+        fetchAdvice();
+        console.log("API call after page reload");
+    });
+
     return ( 
         <div className="relative bg-GrayishBlue lg:w-4/12 w-11/12 h-fit ml-auto mr-auto rounded-lg px-5">
             <div>
-               <h1 className="font-semibold text-center  text-NeonGreen text-xs tracking-widest pt-5">ADVICE # {text.slip.id}</h1>
+               <h1 className="font-semibold text-center  text-NeonGreen text-xs tracking-widest pt-5">ADVICE # {text.slip?.id}</h1>
             </div>
 
             <div className="h-fit my-6">
-                <p className="text-center font-semibold text-LightCyan text-2xl">{text.slip.advice}</p>
+                <p className="text-center font-semibold text-LightCyan text-2xl">{text.slip?.advice}</p>
             </div>
 
             <div className="pb-14">
